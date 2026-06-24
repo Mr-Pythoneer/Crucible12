@@ -16,7 +16,10 @@ Most local-LLM guides tell you to pick a model that fits in VRAM and stop there 
 
 The model that makes this work is **[Qwen3-Coder-Next](https://huggingface.co/Qwen/Qwen3-Coder-Next)**: an 80B-parameter MoE model with only ~3B active parameters per token, purpose-built by the Qwen team for local coding agents, with native 256K context. Because so few parameters activate per token, llama.cpp's `--n-cpu-moe` flag can park a slice of the expert weights in system RAM with only a modest speed cost — the GPU stays fast, the RAM adds capacity you'd otherwise pay for in quality. This is the one trick that actually uses all three components together instead of just the GPU.
 
-The default preset, **`max`**, runs this model at near-lossless **Q6_K_XL**. There are lighter presets too (`crucible` at Q4 for more speed/headroom, `fast` for a fully GPU-resident smaller model), plus a `reasoning` secondary — see [Presets](#presets) and ["Is this really the most powerful?"](#is-this-really-the-most-powerful) below.
+The default preset, **`crucible`**, runs this model at **Q4_K_XL** — fast, reliable, with plenty of RAM headroom. If you'd rather trade a little speed for near-lossless quality there's a **`max`** preset (same model at Q6), a fully-GPU-resident **`fast`** preset, and a **`reasoning`** secondary — see [Presets](#presets) and ["Is this really the most powerful?"](#is-this-really-the-most-powerful) below.
+
+> 🌐 **Interactive setup picker:** [mr-pythoneer.github.io/Crucible12](https://mr-pythoneer.github.io/Crucible12/) — choose a preset and it generates the exact commands for you.
+> 📥 **Download:** [clone or grab the ZIP](https://github.com/Mr-Pythoneer/Crucible12/archive/refs/heads/main.zip).
 
 ## Architecture
 
@@ -39,14 +42,14 @@ OpenCode handles the actual agent work — reading/editing files, running shell 
 
 Four presets, each a single launch script + matching OpenCode config. **They run one at a time** — none of the big ones coexist in 96GB of memory.
 
-| | `max` ⭐ default | `crucible` | `fast` | `reasoning` (secondary) |
+| | `crucible` ⭐ default | `max` | `fast` | `reasoning` (secondary) |
 |---|---|---|---|---|
 | Model | Qwen3-Coder-Next 80B/3B-active | Qwen3-Coder-Next 80B/3B-active | Qwen3-Coder-30B-A3B | gpt-oss-120b 117B/5.1B-active |
-| Quant | `UD-Q6_K_XL` (~73GB) | `UD-Q4_K_XL` (~46GB) | `UD-Q4_K_XL` (~18GB) | native MXFP4 (~60GB) |
+| Quant | `UD-Q4_K_XL` (~46GB) | `UD-Q6_K_XL` (~73GB) | `UD-Q4_K_XL` (~18GB) | native MXFP4 (~60GB) |
 | Placement | GPU + RAM hybrid | GPU + RAM hybrid | Fully GPU-resident | GPU + RAM hybrid |
-| Est. tok/s* | ~35-48 | ~45-60 | fastest | ~30 |
-| Best for | **Most capable reliable agent** | More speed / RAM headroom | Lowest latency, frees CPU/RAM | Hard one-shot reasoning |
-| Script / config | `run-max.ps1` · `opencode.max.json` | `run-crucible.ps1` · `opencode.crucible.json` | `run-fast.ps1` · `opencode.fast.json` | `run-reasoning.ps1` · `opencode.reasoning.json` |
+| Est. tok/s* | ~45-60 | ~35-48 | fastest | ~30 |
+| Best for | **Balanced default — fast + reliable** | Near-lossless quality | Lowest latency, frees CPU/RAM | Hard one-shot reasoning |
+| Script / config | `run-crucible.ps1` · `opencode.crucible.json` | `run-max.ps1` · `opencode.max.json` | `run-fast.ps1` · `opencode.fast.json` | `run-reasoning.ps1` · `opencode.reasoning.json` |
 
 <sub>*Estimated generation tok/s on this exact hardware, extrapolated from RTX 5090 / same-class anchors — not a direct Coder-Next-on-5090 measurement. Confirm with `llama-bench` on your box. Generation is **RAM-bandwidth-bound** for the hybrid presets, so **DDR5 EXPO must be on** (see below).</sub>
 
@@ -54,7 +57,7 @@ Switching presets is just running a different launch script and copying the matc
 
 ## Is this really the most powerful?
 
-Short answer: **`max` is the most powerful config that stays a fast, reliable agentic coder on this hardware** — but it is *not* simply "the biggest model that fits," and that distinction matters.
+Short answer: the default **`crucible`** (Q4) is the balanced pick, but **`max` (the same model at Q6) is the most powerful config that stays a fast, reliable agentic coder on this hardware** — and it is *not* simply "the biggest model that fits," which is the distinction that matters. Switch to `max` whenever you want maximum quality; the default stays Q4 for speed and headroom.
 
 The trap with local MoE inference + CPU offload is that once expert weights spill into system RAM, **generation speed tracks _active_ parameters per token (and RAM bandwidth), not total model size.** A model with 3B active stays fast with half its experts in DDR5; a model with 22-37B active crawls. So the biggest models are technically loadable but practically useless here. Ranked for *agentic coding on this exact box*:
 
@@ -80,9 +83,9 @@ cd Crucible12
 # 1. Get a CUDA-enabled llama.cpp build (downloads the latest prebuilt release)
 .\setup\01-install-llamacpp.ps1
 
-# 2. Download model weights (default = the "max" preset, ~73GB;
-#    use -Preset crucible | fast | reasoning | all for others)
-.\setup\02-download-models.ps1 -Preset max
+# 2. Download model weights (default = the "crucible" preset, ~46GB;
+#    use -Preset max | fast | reasoning | all for others)
+.\setup\02-download-models.ps1 -Preset crucible
 
 # 3. Install OpenCode
 .\setup\03-install-opencode.ps1
@@ -93,7 +96,7 @@ cd Crucible12
 Then, in one window, start the inference server (leave it running):
 
 ```powershell
-.\setup\run-max.ps1        # or run-crucible.ps1 / run-fast.ps1 / run-reasoning.ps1
+.\setup\run-crucible.ps1   # or run-max.ps1 / run-fast.ps1 / run-reasoning.ps1
 ```
 
 In a second window, confirm it's actually using the GPU (and, for `crucible`, the CPU/RAM too):
@@ -107,7 +110,7 @@ You should see GPU utilization spike during generation and a tokens/sec figure p
 Finally, point OpenCode at the running server and launch it:
 
 ```powershell
-copy config\opencode.max.json opencode.json   # match whichever server you started
+copy config\opencode.crucible.json opencode.json   # match whichever server you started
 opencode
 ```
 

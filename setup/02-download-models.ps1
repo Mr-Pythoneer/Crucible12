@@ -9,21 +9,21 @@
     *-00001-of-000NN.gguf files).
 
     Presets (each model runs ONE AT A TIME — they don't coexist in 96GB of memory):
-      max       Qwen3-Coder-Next @ Q6_K_XL  (~73GB) — recommended best agentic coder
-      crucible  Qwen3-Coder-Next @ Q4_K_XL  (~46GB) — faster, more RAM headroom
+      crucible  Qwen3-Coder-Next @ Q4_K_XL  (~46GB) — DEFAULT, balanced agentic coder
+      max       Qwen3-Coder-Next @ Q6_K_XL  (~73GB) — higher fidelity, a bit slower
       fast      Qwen3-Coder-30B-A3B @ Q4    (~18GB) — fully on GPU, lowest latency
       reasoning gpt-oss-120b native MXFP4   (~60GB) — strong reasoning SECONDARY
 
 .PARAMETER Preset
-    "max", "crucible", "fast", "reasoning", or "all". Default: max.
+    "crucible", "max", "fast", "reasoning", or "all". Default: crucible.
 
 .PARAMETER ModelsDir
     Destination directory. Defaults to ..\models relative to this script.
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet("max", "crucible", "fast", "reasoning", "all")]
-    [string]$Preset = "max",
+    [ValidateSet("crucible", "max", "fast", "reasoning", "all")]
+    [string]$Preset = "crucible",
 
     [string]$ModelsDir = (Join-Path $PSScriptRoot "..\models")
 )

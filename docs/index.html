@@ -8,13 +8,19 @@
   :root {
     --bg: #0b0c0f;
     --bg-card: #15171c;
+    --bg-card2: #1b1e25;
     --border: #262a33;
+    --border-hi: #3a4150;
     --text: #e6e8ec;
     --text-dim: #9aa0ab;
     --accent: #ff6a3d;
     --accent-dim: #c44f2b;
+    --vram: #ff6a3d;
+    --ram: #4d9fff;
+    --ok: #51cf66;
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
@@ -22,67 +28,97 @@
     font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
   }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); }
   header {
-    padding: 96px 0 64px;
+    padding: 88px 0 56px;
     background: radial-gradient(ellipse at top, rgba(255,106,61,0.15), transparent 60%);
     border-bottom: 1px solid var(--border);
   }
-  h1 {
-    font-size: 2.6rem;
-    margin: 0 0 12px;
-    letter-spacing: -0.02em;
-  }
+  h1 { font-size: 2.7rem; margin: 0 0 12px; letter-spacing: -0.02em; }
   h1 span { color: var(--accent); }
-  .tagline { color: var(--text-dim); font-size: 1.15rem; max-width: 620px; }
-  .cta { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-block;
-    padding: 12px 22px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
+  .tagline { color: var(--text-dim); font-size: 1.15rem; max-width: 680px; }
+  .cta { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; border: none; }
   .btn-primary { background: var(--accent); color: #1a0a04; }
-  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
-  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border-hi); }
+  section { padding: 52px 0; border-bottom: 1px solid var(--border); }
   section:last-of-type { border-bottom: none; }
-  h2 { font-size: 1.5rem; margin-bottom: 20px; }
+  h2 { font-size: 1.5rem; margin: 0 0 8px; }
+  .sub { color: var(--text-dim); margin: 0 0 24px; }
   .specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .spec-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-  }
+  .spec-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
   .spec-card .label { color: var(--accent); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
   .spec-card .value { font-size: 1.1rem; margin-top: 6px; font-weight: 600; }
   .spec-card .role { color: var(--text-dim); font-size: 0.88rem; margin-top: 6px; }
-  pre {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    overflow-x: auto;
-    font-size: 0.88rem;
+
+  /* configurator */
+  .cfg { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 760px) { .cfg { grid-template-columns: 1fr; } .specs { grid-template-columns: 1fr; } h1 { font-size: 2.1rem; } }
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .preset {
+    text-align: left; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; cursor: pointer; transition: border-color .15s, transform .1s; color: var(--text);
   }
-  code { color: var(--accent); }
+  .preset:hover { border-color: var(--border-hi); }
+  .preset.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .preset .badge { display: inline-block; font-size: 0.62rem; letter-spacing: 0.08em; font-weight: 700; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; background: rgba(255,106,61,0.15); color: var(--accent); margin-bottom: 8px; }
+  .preset .pname { font-size: 1.15rem; font-weight: 700; }
+  .preset .pmodel { color: var(--text-dim); font-size: 0.84rem; margin-top: 2px; }
+  .preset .pquant { font-size: 0.8rem; margin-top: 8px; color: var(--text); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .panel h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  .panel .best { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 18px; }
+  .kv { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; }
+  .kv:last-of-type { border-bottom: none; }
+  .kv .k { color: var(--text-dim); }
+  .kv .v { font-weight: 600; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .controls { display: flex; gap: 14px; margin: 18px 0 6px; flex-wrap: wrap; }
+  .control { flex: 1; min-width: 130px; }
+  .control label { display: block; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 6px; }
+  select, input[type=number] {
+    width: 100%; background: var(--bg-card2); color: var(--text); border: 1px solid var(--border-hi);
+    border-radius: 8px; padding: 9px 10px; font-size: 0.9rem; font-family: inherit;
+  }
+  input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .mem { margin-top: 18px; }
+  .mem .barrow { margin-bottom: 12px; }
+  .mem .barlabel { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
+  .mem .barlabel .name { color: var(--text-dim); }
+  .track { height: 12px; background: var(--bg-card2); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
+  .fill { height: 100%; border-radius: 999px; transition: width .25s ease; }
+  .fill.vram { background: linear-gradient(90deg, var(--accent-dim), var(--vram)); }
+  .fill.ram { background: linear-gradient(90deg, #2c6fb3, var(--ram)); }
+
+  .cmd { position: relative; margin-top: 22px; }
+  .cmd pre { background: #0e1014; border: 1px solid var(--border); border-radius: 10px; padding: 18px; overflow-x: auto; font-size: 0.82rem; line-height: 1.7; margin: 0; }
+  .cmd code { color: #cdd3dd; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .cmd .c-comment { color: #6b7280; }
+  .cmd .c-accent { color: var(--accent); }
+  .copybtn { position: absolute; top: 10px; right: 10px; background: var(--bg-card2); border: 1px solid var(--border-hi); color: var(--text); font-size: 0.75rem; padding: 6px 12px; border-radius: 7px; cursor: pointer; }
+  .copybtn.copied { color: var(--ok); border-color: var(--ok); }
+
   table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
-  th { color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  th { color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; }
+  .note { color: var(--text-dim); font-size: 0.85rem; }
+  .callout { background: rgba(77,159,255,0.08); border: 1px solid rgba(77,159,255,0.3); border-radius: 10px; padding: 14px 16px; font-size: 0.9rem; margin-top: 18px; }
   footer { padding: 40px 0 80px; color: var(--text-dim); font-size: 0.88rem; }
-  footer a { color: var(--accent); text-decoration: none; }
 </style>
 </head>
 <body>
 
-<header class="wrap">
-  <h1>Crucible<span>12</span></h1>
-  <p class="tagline">A fully local, fully offline AI coding agent — tuned specifically for an RTX 5090, a Ryzen 9 9950X3D, and 64GB of DDR5-6400. No API keys, no cloud, no usage limits. Runs an 80B model across GPU + CPU + RAM.</p>
-  <div class="cta">
-    <a class="btn btn-primary" href="https://github.com/Mr-Pythoneer/Crucible12">View on GitHub</a>
-    <a class="btn btn-secondary" href="https://github.com/Mr-Pythoneer/Crucible12#quick-start-windows-11">Quick Start</a>
+<header>
+  <div class="wrap">
+    <h1>Crucible<span>12</span></h1>
+    <p class="tagline">A fully local, fully offline AI coding agent — tuned for an RTX 5090, a Ryzen 9 9950X3D, and 64GB of DDR5-6400. No API keys, no cloud, no usage limits. Runs an 80B model across GPU + CPU + RAM.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="https://github.com/Mr-Pythoneer/Crucible12">⬇ Download from GitHub</a>
+      <a class="btn btn-secondary" href="#configure">Pick a model ↓</a>
+    </div>
   </div>
 </header>
 
@@ -90,12 +126,8 @@
 
 <section>
   <h2>Built on what already works</h2>
-  <p>Crucible12 doesn't reinvent the agent loop — it pairs <a href="https://github.com/anomalyco/opencode" style="color:var(--accent)">OpenCode</a>, the leading open-source terminal coding agent, with a hardware-tuned <a href="https://github.com/ggml-org/llama.cpp" style="color:var(--accent)">llama.cpp</a> inference backend and a model chosen specifically to exploit this exact GPU + CPU + RAM combination.</p>
-</section>
-
-<section>
-  <h2>Why this hardware, specifically</h2>
-  <div class="specs">
+  <p class="note">Crucible12 doesn't reinvent the agent loop — it pairs <a href="https://github.com/anomalyco/opencode">OpenCode</a>, the leading open-source terminal coding agent, with a hardware-tuned <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> backend and models chosen to exploit this exact GPU + CPU + RAM combination.</p>
+  <div class="specs" style="margin-top:22px">
     <div class="spec-card">
       <div class="label">RTX 5090</div>
       <div class="value">32GB GDDR7 · Blackwell</div>
@@ -114,36 +146,197 @@
   </div>
 </section>
 
-<section>
-  <h2>Four presets, one at a time</h2>
-  <table>
-    <tr><th></th><th>max ⭐</th><th>crucible</th><th>fast</th><th>reasoning</th></tr>
-    <tr><td>Model</td><td>Qwen3-Coder-Next (80B/3B)</td><td>Qwen3-Coder-Next (80B/3B)</td><td>Qwen3-Coder-30B-A3B</td><td>gpt-oss-120b (117B/5.1B)</td></tr>
-    <tr><td>Quant</td><td>Q6 (~73GB)</td><td>Q4 (~46GB)</td><td>Q4 (~18GB)</td><td>MXFP4 (~60GB)</td></tr>
-    <tr><td>~tok/s</td><td>35-48</td><td>45-60</td><td>fastest</td><td>~30</td></tr>
-    <tr><td>Best for</td><td>Most capable reliable agent</td><td>More speed / headroom</td><td>Lowest latency</td><td>Hard one-shot reasoning</td></tr>
-  </table>
-  <p style="color:var(--text-dim);font-size:0.9rem;margin-top:14px">Once MoE experts spill into system RAM, generation speed tracks <em>active</em> params, not total size — which is why an 80B model with 3B active beats a 235B model with 22B active on this box. <strong>Enable DDR5 EXPO in BIOS</strong> (worth up to ~3× on RAM-bound generation).</p>
+<section id="configure">
+  <h2>Pick your model</h2>
+  <p class="sub">Choose a preset — the specs, memory split, and exact setup commands update live.</p>
+
+  <div class="cfg">
+    <div>
+      <div class="preset-grid" id="presetGrid"></div>
+      <div class="controls">
+        <div class="control">
+          <label for="ctxSel">Context window</label>
+          <select id="ctxSel">
+            <option value="32768">32K</option>
+            <option value="65536">64K</option>
+            <option value="131072">128K</option>
+            <option value="262144">256K</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="moeInput">--n-cpu-moe</label>
+          <input type="number" id="moeInput" min="0" max="48" step="1">
+        </div>
+      </div>
+      <p class="note" style="margin-top:4px">Defaults are sensible starting points. Lower <code>--n-cpu-moe</code> until VRAM sits ~30GB; raise it if you hit CUDA out-of-memory.</p>
+    </div>
+
+    <div class="panel">
+      <h3 id="pTitle"></h3>
+      <p class="best" id="pBest"></p>
+      <div class="kv"><span class="k">Model</span><span class="v" id="pModel"></span></div>
+      <div class="kv"><span class="k">Parameters</span><span class="v" id="pParams"></span></div>
+      <div class="kv"><span class="k">Quant</span><span class="v" id="pQuant"></span></div>
+      <div class="kv"><span class="k">Download size</span><span class="v" id="pSize"></span></div>
+      <div class="kv"><span class="k">Est. generation</span><span class="v" id="pTokps"></span></div>
+      <div class="kv"><span class="k">Placement</span><span class="v" id="pPlace"></span></div>
+
+      <div class="mem">
+        <div class="barrow">
+          <div class="barlabel"><span class="name">VRAM (RTX 5090)</span><span id="vramTxt"></span></div>
+          <div class="track"><div class="fill vram" id="vramFill"></div></div>
+        </div>
+        <div class="barrow">
+          <div class="barlabel"><span class="name">System RAM</span><span id="ramTxt"></span></div>
+          <div class="track"><div class="fill ram" id="ramFill"></div></div>
+        </div>
+      </div>
+      <p class="note" id="memNote" style="margin-top:10px"></p>
+    </div>
+  </div>
+
+  <div class="cmd">
+    <button class="copybtn" id="copyBtn">Copy</button>
+    <pre><code id="cmdBlock"></code></pre>
+  </div>
+
+  <div class="callout">
+    💡 <strong>Enable DDR5 EXPO/XMP in your BIOS</strong> before benchmarking. The hybrid presets stream experts from system RAM every token, so generation speed is bandwidth-bound — EXPO is worth up to ~3× throughput.
+  </div>
 </section>
 
 <section>
-  <h2>Quick start</h2>
-  <pre><code>git clone https://github.com/Mr-Pythoneer/Crucible12.git
-cd Crucible12
-.\setup\01-install-llamacpp.ps1
-.\setup\02-download-models.ps1 -Preset max
-.\setup\03-install-opencode.ps1
-.\setup\run-max.ps1           # in its own window
-.\setup\benchmark.ps1         # confirm GPU+CPU are both working
-opencode</code></pre>
-  <p>Full walkthrough, tuning knobs, and troubleshooting are in the <a href="https://github.com/Mr-Pythoneer/Crucible12#readme" style="color:var(--accent)">README</a>.</p>
+  <h2>Why active params, not total size, decide speed here</h2>
+  <p class="note">Once MoE experts spill into system RAM, generation speed tracks the <em>active</em> parameters per token (and RAM bandwidth), not the total model size. That's why an 80B model with 3B active beats a 235B model with 22B active on this box — and why the genuinely huge models are loadable curiosities, not daily drivers.</p>
+  <table>
+    <tr><th>Rank</th><th>Config</th><th>Verdict</th></tr>
+    <tr><td>1</td><td>Qwen3-Coder-Next @ Q6 (<code>max</code>)</td><td>Best capability-per-usable-speed; near-lossless, same tool-calling reliability.</td></tr>
+    <tr><td>2</td><td>Qwen3-Coder-Next @ Q4 (<code>crucible</code>)</td><td>The default — fastest hybrid, most RAM headroom, proven.</td></tr>
+    <tr><td>3</td><td>gpt-oss-120b MXFP4 (<code>reasoning</code>)</td><td>Strongest raw coder that fits; agentic tool-calling can be flaky. Secondary.</td></tr>
+    <tr><td>4–6</td><td>GLM-4.5-Air · Qwen3-235B · GLM-4.6/DeepSeek</td><td>Too slow (high active params) or don't fit at all.</td></tr>
+  </table>
+  <p class="note" style="margin-top:14px">Full reasoning, benchmarks, and tuning guide in the <a href="https://github.com/Mr-Pythoneer/Crucible12#readme">README</a>.</p>
 </section>
 
 </div>
 
 <footer class="wrap">
-  Built on <a href="https://github.com/anomalyco/opencode">OpenCode</a> and <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>. MIT licensed — see <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/LICENSE">LICENSE</a> and <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/NOTICE">NOTICE</a>.
+  Built on <a href="https://github.com/anomalyco/opencode">OpenCode</a> and <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>, with models from the <a href="https://huggingface.co/Qwen">Qwen team</a>, <a href="https://huggingface.co/openai">OpenAI</a>, and <a href="https://huggingface.co/unsloth">Unsloth</a>. MIT licensed — see <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/LICENSE">LICENSE</a> &amp; <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/NOTICE">NOTICE</a>. ·
+  <a href="https://github.com/Mr-Pythoneer/Crucible12/archive/refs/heads/main.zip">Download ZIP</a>
 </footer>
+
+<script>
+const PRESETS = {
+  crucible: { badge:'Default', name:'crucible', model:'Qwen3-Coder-Next', params:'80B total · 3B active', quant:'UD-Q4_K_XL', size:46, tokps:'45–60 tok/s', place:'GPU + RAM hybrid', vram:27, ram:21, moe:16, ctx:65536, runScript:'run-crucible.ps1', config:'opencode.crucible.json', best:'Balanced default — fast, reliable agentic coding with RAM headroom to spare.' },
+  max:      { badge:'Max quality', name:'max', model:'Qwen3-Coder-Next', params:'80B total · 3B active', quant:'UD-Q6_K_XL', size:73, tokps:'35–48 tok/s', place:'GPU + RAM hybrid', vram:29, ram:46, moe:26, ctx:131072, runScript:'run-max.ps1', config:'opencode.max.json', best:'Same model at near-lossless Q6 — the most capable config that stays a real-time agent.' },
+  fast:     { badge:'Lowest latency', name:'fast', model:'Qwen3-Coder-30B-A3B', params:'30B total · 3B active', quant:'UD-Q4_K_XL', size:18, tokps:'fastest', place:'Fully on GPU', vram:21, ram:0, moe:null, ctx:131072, runScript:'run-fast.ps1', config:'opencode.fast.json', best:'Fully GPU-resident — lowest latency, leaves CPU/RAM free (e.g. to game alongside it).' },
+  reasoning:{ badge:'Secondary', name:'reasoning', model:'gpt-oss-120b', params:'117B total · 5.1B active', quant:'native MXFP4', size:60, tokps:'~30 tok/s', place:'GPU + RAM hybrid', vram:29, ram:33, moe:20, ctx:131072, runScript:'run-reasoning.ps1', config:'opencode.reasoning.json', best:'Strongest raw reasoner / one-shot coder that fits. Tool-calling can be flaky in agents — use as a secondary, not your daily driver.' }
+};
+const VRAM_CAP = 32, RAM_CAP = 64;
+let state = { preset:'crucible', ctx:65536, moe:16 };
+
+const el = id => document.getElementById(id);
+
+function buildPresetCards() {
+  const grid = el('presetGrid');
+  grid.innerHTML = '';
+  Object.values(PRESETS).forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'preset' + (p.name === state.preset ? ' active' : '');
+    b.dataset.preset = p.name;
+    b.innerHTML = `<span class="badge">${p.badge}</span>
+      <div class="pname">${p.name}</div>
+      <div class="pmodel">${p.model}</div>
+      <div class="pquant">${p.quant} · ~${p.size}GB</div>`;
+    b.onclick = () => selectPreset(p.name);
+    grid.appendChild(b);
+  });
+}
+
+function selectPreset(name) {
+  state.preset = name;
+  const p = PRESETS[name];
+  state.ctx = p.ctx;
+  state.moe = p.moe;
+  el('ctxSel').value = String(p.ctx);
+  const moeInput = el('moeInput');
+  if (p.moe === null) { moeInput.value = ''; moeInput.disabled = true; }
+  else { moeInput.value = p.moe; moeInput.disabled = false; }
+  document.querySelectorAll('.preset').forEach(x => x.classList.toggle('active', x.dataset.preset === name));
+  render();
+}
+
+function kvCacheGB(ctx) {
+  // rough, illustrative: ~1.5GB per 64K with q8_0 cache on these MoE models
+  return Math.round((ctx / 65536) * 1.5 * 10) / 10;
+}
+
+function render() {
+  const p = PRESETS[state.preset];
+  el('pTitle').textContent = p.name + '  ·  ' + p.badge;
+  el('pBest').textContent = p.best;
+  el('pModel').textContent = p.model;
+  el('pParams').textContent = p.params;
+  el('pQuant').textContent = p.quant;
+  el('pSize').textContent = '~' + p.size + ' GB';
+  el('pTokps').textContent = p.tokps;
+  el('pPlace').textContent = p.place;
+
+  const kv = kvCacheGB(state.ctx);
+  let vramUsed = Math.min(VRAM_CAP, p.vram + kv);
+  let ramUsed = p.ram;
+  el('vramFill').style.width = (vramUsed / VRAM_CAP * 100) + '%';
+  el('ramFill').style.width = (ramUsed / RAM_CAP * 100) + '%';
+  el('vramTxt').textContent = '≈ ' + vramUsed.toFixed(1) + ' / ' + VRAM_CAP + ' GB';
+  el('ramTxt').textContent = '≈ ' + ramUsed.toFixed(0) + ' / ' + RAM_CAP + ' GB';
+  el('memNote').textContent = 'Approximate split (incl. ~' + kv + 'GB KV cache at this context). Tune --n-cpu-moe on your box so VRAM lands near 30GB with headroom.';
+
+  renderCommand(p);
+}
+
+function renderCommand(p) {
+  const moe = (p.moe !== null && state.moe !== '' && state.moe != null) ? ' -CpuMoe ' + state.moe : '';
+  const runLine = '.\\setup\\' + p.runScript + moe + ' -CtxSize ' + state.ctx;
+  const lines = [
+    ['c', '# --- one-time install (skip if already done) ---'],
+    ['p', '.\\setup\\01-install-llamacpp.ps1'],
+    ['p', '.\\setup\\03-install-opencode.ps1'],
+    ['s', ''],
+    ['c', '# --- download the ' + p.name + ' model (~' + p.size + ' GB) ---'],
+    ['a', '.\\setup\\02-download-models.ps1 -Preset ' + p.name],
+    ['s', ''],
+    ['c', '# --- start the local server (keep this window open) ---'],
+    ['a', runLine],
+    ['s', ''],
+    ['c', '# --- point OpenCode at it, then code ---'],
+    ['p', 'copy config\\' + p.config + ' opencode.json'],
+    ['a', 'opencode']
+  ];
+  const html = lines.map(([t, txt]) => {
+    if (t === 's') return '';
+    if (t === 'c') return '<span class="c-comment">' + esc(txt) + '</span>';
+    if (t === 'a') return '<span class="c-accent">' + esc(txt) + '</span>';
+    return esc(txt);
+  }).join('\n');
+  el('cmdBlock').innerHTML = html;
+  el('cmdBlock').dataset.plain = lines.map(([t, txt]) => txt).join('\n');
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+el('ctxSel').addEventListener('change', e => { state.ctx = parseInt(e.target.value, 10); render(); });
+el('moeInput').addEventListener('input', e => { state.moe = e.target.value === '' ? '' : parseInt(e.target.value, 10); render(); });
+el('copyBtn').addEventListener('click', () => {
+  const text = el('cmdBlock').dataset.plain || '';
+  navigator.clipboard.writeText(text).then(() => {
+    const b = el('copyBtn'); b.textContent = 'Copied ✓'; b.classList.add('copied');
+    setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1600);
+  }).catch(() => {});
+});
+
+buildPresetCards();
+selectPreset('crucible');
+</script>
 
 </body>
 </html>
