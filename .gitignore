@@ -1,0 +1,12 @@
+# Model weights — multi-GB, never commit
+models/
+*.gguf
+
+# llama.cpp binaries (downloaded by setup/01-install-llamacpp.ps1)
+bin/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

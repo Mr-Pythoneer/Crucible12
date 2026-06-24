@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crucible12 — Local AI Coding Agent</title>
+<style>
+  :root {
+    --bg: #0b0c0f;
+    --bg-card: #15171c;
+    --border: #262a33;
+    --text: #e6e8ec;
+    --text-dim: #9aa0ab;
+    --accent: #ff6a3d;
+    --accent-dim: #c44f2b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  header {
+    padding: 96px 0 64px;
+    background: radial-gradient(ellipse at top, rgba(255,106,61,0.15), transparent 60%);
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-size: 2.6rem;
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  h1 span { color: var(--accent); }
+  .tagline { color: var(--text-dim); font-size: 1.15rem; max-width: 620px; }
+  .cta { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .btn-primary { background: var(--accent); color: #1a0a04; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2 { font-size: 1.5rem; margin-bottom: 20px; }
+  .specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .spec-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .spec-card .label { color: var(--accent); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .spec-card .value { font-size: 1.1rem; margin-top: 6px; font-weight: 600; }
+  .spec-card .role { color: var(--text-dim); font-size: 0.88rem; margin-top: 6px; }
+  pre {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.88rem;
+  }
+  code { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+  th { color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+  footer { padding: 40px 0 80px; color: var(--text-dim); font-size: 0.88rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>Crucible<span>12</span></h1>
+  <p class="tagline">A fully local, fully offline AI coding agent — tuned specifically for an RTX 5090, a Ryzen 9 9950X3D, and 64GB of DDR5-6400. No API keys, no cloud, no usage limits.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://github.com/Mr-Pythoneer/Crucible12">View on GitHub</a>
+    <a class="btn btn-secondary" href="https://github.com/Mr-Pythoneer/Crucible12#quick-start-windows-11">Quick Start</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2>Built on what already works</h2>
+  <p>Crucible12 doesn't reinvent the agent loop — it pairs <a href="https://github.com/anomalyco/opencode" style="color:var(--accent)">OpenCode</a>, the leading open-source terminal coding agent, with a hardware-tuned <a href="https://github.com/ggml-org/llama.cpp" style="color:var(--accent)">llama.cpp</a> inference backend and a model chosen specifically to exploit this exact GPU + CPU + RAM combination.</p>
+</section>
+
+<section>
+  <h2>Why this hardware, specifically</h2>
+  <div class="specs">
+    <div class="spec-card">
+      <div class="label">RTX 5090</div>
+      <div class="value">32GB GDDR7 · Blackwell</div>
+      <div class="role">Attention layers, shared experts, most routed experts</div>
+    </div>
+    <div class="spec-card">
+      <div class="label">Ryzen 9 9950X3D</div>
+      <div class="value">16C / 32T · 3D V-Cache</div>
+      <div class="role">Computes MoE experts that don't fit on the GPU</div>
+    </div>
+    <div class="spec-card">
+      <div class="label">64GB DDR5-6400</div>
+      <div class="value">CL32, dual-channel</div>
+      <div class="role">Capacity for overflow experts the GPU alone can't hold</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Two presets</h2>
+  <table>
+    <tr><th></th><th>crucible (default)</th><th>fast</th></tr>
+    <tr><td>Model</td><td>Qwen3-Coder-Next (80B / 3B active)</td><td>Qwen3-Coder-30B-A3B</td></tr>
+    <tr><td>Placement</td><td>GPU + CPU/RAM hybrid</td><td>Fully GPU-resident</td></tr>
+    <tr><td>Best for</td><td>Maximum capability</td><td>Lowest latency</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Quick start</h2>
+  <pre><code>git clone https://github.com/Mr-Pythoneer/Crucible12.git
+cd Crucible12
+.\setup\01-install-llamacpp.ps1
+.\setup\02-download-models.ps1 -Preset both
+.\setup\03-install-opencode.ps1
+.\setup\run-crucible.ps1      # in its own window
+.\setup\benchmark.ps1         # confirm GPU+CPU are both working
+opencode</code></pre>
+  <p>Full walkthrough, tuning knobs, and troubleshooting are in the <a href="https://github.com/Mr-Pythoneer/Crucible12#readme" style="color:var(--accent)">README</a>.</p>
+</section>
+
+</div>
+
+<footer class="wrap">
+  Built on <a href="https://github.com/anomalyco/opencode">OpenCode</a> and <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>. MIT licensed — see <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/LICENSE">LICENSE</a> and <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/NOTICE">NOTICE</a>.
+</footer>
+
+</body>
+</html>

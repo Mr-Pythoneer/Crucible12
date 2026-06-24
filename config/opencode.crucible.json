@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "crucible-local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Crucible (Qwen3-Coder-Next, local GPU+RAM hybrid)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1"
+      },
+      "models": {
+        "qwen3-coder-next": {
+          "name": "Qwen3-Coder-Next (80B total / 3B active MoE)"
+        }
+      }
+    }
+  }
+}

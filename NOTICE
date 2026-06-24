@@ -1,0 +1,16 @@
+Crucible12 is a hardware-tuned local-inference stack and setup automation
+layer. It does not vendor, fork, or modify any of the projects below — they
+are installed as ordinary dependencies and configured via the files in
+config/ and setup/.
+
+- OpenCode — the coding agent itself. https://github.com/anomalyco/opencode
+  MIT License, Copyright (c) Anomaly Co.
+- llama.cpp — local inference engine. https://github.com/ggml-org/llama.cpp
+  MIT License, Copyright (c) Georgi Gerganov and contributors.
+- Qwen3-Coder-Next and Qwen3-Coder-30B-A3B-Instruct — Qwen Team / Alibaba Cloud.
+  See respective Hugging Face model cards for license terms.
+- GGUF quantizations used by default are produced by Unsloth
+  (https://huggingface.co/unsloth).
+
+Crucible12's own scripts, configs, and documentation are MIT-licensed — see
+LICENSE.
