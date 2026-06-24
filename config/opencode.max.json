@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "crucible-max-local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Crucible MAX (Qwen3-Coder-Next Q6, GPU+RAM hybrid)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1"
+      },
+      "models": {
+        "qwen3-coder-next-q6": {
+          "name": "Qwen3-Coder-Next Q6_K_XL (near-lossless, 3B active MoE)"
+        }
+      }
+    }
+  }
+}

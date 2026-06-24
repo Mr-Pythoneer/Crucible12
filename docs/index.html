@@ -79,7 +79,7 @@
 
 <header class="wrap">
   <h1>Crucible<span>12</span></h1>
-  <p class="tagline">A fully local, fully offline AI coding agent — tuned specifically for an RTX 5090, a Ryzen 9 9950X3D, and 64GB of DDR5-6400. No API keys, no cloud, no usage limits.</p>
+  <p class="tagline">A fully local, fully offline AI coding agent — tuned specifically for an RTX 5090, a Ryzen 9 9950X3D, and 64GB of DDR5-6400. No API keys, no cloud, no usage limits. Runs an 80B model across GPU + CPU + RAM.</p>
   <div class="cta">
     <a class="btn btn-primary" href="https://github.com/Mr-Pythoneer/Crucible12">View on GitHub</a>
     <a class="btn btn-secondary" href="https://github.com/Mr-Pythoneer/Crucible12#quick-start-windows-11">Quick Start</a>
@@ -115,13 +115,15 @@
 </section>
 
 <section>
-  <h2>Two presets</h2>
+  <h2>Four presets, one at a time</h2>
   <table>
-    <tr><th></th><th>crucible (default)</th><th>fast</th></tr>
-    <tr><td>Model</td><td>Qwen3-Coder-Next (80B / 3B active)</td><td>Qwen3-Coder-30B-A3B</td></tr>
-    <tr><td>Placement</td><td>GPU + CPU/RAM hybrid</td><td>Fully GPU-resident</td></tr>
-    <tr><td>Best for</td><td>Maximum capability</td><td>Lowest latency</td></tr>
+    <tr><th></th><th>max ⭐</th><th>crucible</th><th>fast</th><th>reasoning</th></tr>
+    <tr><td>Model</td><td>Qwen3-Coder-Next (80B/3B)</td><td>Qwen3-Coder-Next (80B/3B)</td><td>Qwen3-Coder-30B-A3B</td><td>gpt-oss-120b (117B/5.1B)</td></tr>
+    <tr><td>Quant</td><td>Q6 (~73GB)</td><td>Q4 (~46GB)</td><td>Q4 (~18GB)</td><td>MXFP4 (~60GB)</td></tr>
+    <tr><td>~tok/s</td><td>35-48</td><td>45-60</td><td>fastest</td><td>~30</td></tr>
+    <tr><td>Best for</td><td>Most capable reliable agent</td><td>More speed / headroom</td><td>Lowest latency</td><td>Hard one-shot reasoning</td></tr>
   </table>
+  <p style="color:var(--text-dim);font-size:0.9rem;margin-top:14px">Once MoE experts spill into system RAM, generation speed tracks <em>active</em> params, not total size — which is why an 80B model with 3B active beats a 235B model with 22B active on this box. <strong>Enable DDR5 EXPO in BIOS</strong> (worth up to ~3× on RAM-bound generation).</p>
 </section>
 
 <section>
@@ -129,9 +131,9 @@
   <pre><code>git clone https://github.com/Mr-Pythoneer/Crucible12.git
 cd Crucible12
 .\setup\01-install-llamacpp.ps1
-.\setup\02-download-models.ps1 -Preset both
+.\setup\02-download-models.ps1 -Preset max
 .\setup\03-install-opencode.ps1
-.\setup\run-crucible.ps1      # in its own window
+.\setup\run-max.ps1           # in its own window
 .\setup\benchmark.ps1         # confirm GPU+CPU are both working
 opencode</code></pre>
   <p>Full walkthrough, tuning knobs, and troubleshooting are in the <a href="https://github.com/Mr-Pythoneer/Crucible12#readme" style="color:var(--accent)">README</a>.</p>

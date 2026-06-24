@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "reasoning-local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Reasoning secondary (gpt-oss-120b, MXFP4)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1"
+      },
+      "models": {
+        "gpt-oss-120b": {
+          "name": "gpt-oss-120b (117B total / 5.1B active, native MXFP4)"
+        }
+      }
+    }
+  }
+}
