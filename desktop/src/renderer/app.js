@@ -36,9 +36,16 @@ function setView(view) {
 }
 
 function newChat() {
-  const conv = { id: newConversationId(), title: "New chat", messages: [] };
-  state.conversations.unshift(conv);
-  state.activeConversationId = conv.id;
+  // Reuse an already-empty, unsent "New chat" if one exists instead of stacking up
+  // duplicates — easy to trigger by clicking the button more than once.
+  const existingEmpty = state.conversations.find((c) => c.messages.length === 0);
+  if (existingEmpty) {
+    state.activeConversationId = existingEmpty.id;
+  } else {
+    const conv = { id: newConversationId(), title: "New chat", messages: [] };
+    state.conversations.unshift(conv);
+    state.activeConversationId = conv.id;
+  }
   state.view = "chat";
   render();
 }
@@ -54,11 +61,6 @@ async function deleteConversation(id) {
   state.conversations = state.conversations.filter((c) => c.id !== id);
   if (state.activeConversationId === id) state.activeConversationId = null;
   render();
-}
-
-function persistActiveConversation() {
-  const conv = activeConversation();
-  if (conv) window.crucible.conversations.save(conv);
 }
 
 function render() {
@@ -86,10 +88,11 @@ async function boot() {
     state.view = "setup";
   }
 
-  window.crucible.server.onState(async ({ state: s }) => {
+  window.crucible.server.onState(({ state: s }) => {
     state.serverStatus.state = s;
-    renderSidebarStatus();
-    if (state.view === "setup") renderSetupView();
+    if (s === "stopped" || s === "error") state.serverStatus.activePresetId = null;
+    render(); // covers both views — previously only re-rendered Setup, leaving Chat's
+              // composer/model-chip stuck on stale state if you switched away while starting
   });
 
   render();

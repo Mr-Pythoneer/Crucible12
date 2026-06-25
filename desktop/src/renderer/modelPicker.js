@@ -127,6 +127,8 @@ async function startDownload(presetId) {
   }
   downloadingId = null;
   renderPickerBody();
+  render(); // refresh the underlying Setup/Chat view too — its Start button etc. depend on
+            // preset.downloaded, which just changed, and they don't auto-refresh on their own
 }
 
 async function useModel(presetId) {

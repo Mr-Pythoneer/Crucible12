@@ -123,15 +123,28 @@ async function sendMessage() {
     state.conversations.unshift(conv);
     state.activeConversationId = conv.id;
   }
+  const convId = conv.id; // captured so this stream always targets THIS conversation,
+                           // even if the user switches to a different one mid-stream
   conv.messages.push({ role: "user", content: text });
   if (conv.messages.length === 1) conv.title = text.slice(0, 48);
   conv.messages.push({ role: "assistant", content: "" });
   state.sending = true;
   render();
-  persistActiveConversation();
+  window.crucible.conversations.save(conv);
 
   const port = state.settings.port;
   const assistantMsg = conv.messages[conv.messages.length - 1];
+  let lastRender = 0;
+  const RENDER_INTERVAL_MS = 60; // re-rendering+re-parsing markdown on every token is O(n^2)
+                                  // over a long response — throttle to ~16fps, still feels live
+
+  const maybeUpdateBubble = (force) => {
+    if (state.activeConversationId !== convId) return; // user navigated away — data still updates, DOM doesn't
+    const now = Date.now();
+    if (!force && now - lastRender < RENDER_INTERVAL_MS) return;
+    lastRender = now;
+    updateLastBubble(assistantMsg.content);
+  };
 
   try {
     const res = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
@@ -164,7 +177,7 @@ async function sendMessage() {
           const delta = json.choices?.[0]?.delta?.content;
           if (delta) {
             assistantMsg.content += delta;
-            updateLastBubble(assistantMsg.content);
+            maybeUpdateBubble(false);
           }
         } catch {
           // partial/non-JSON line — ignore, next chunk will complete it
@@ -173,11 +186,11 @@ async function sendMessage() {
     }
   } catch (err) {
     assistantMsg.content += `\n\n*[error: ${err.message}]*`;
-    updateLastBubble(assistantMsg.content);
   }
 
+  maybeUpdateBubble(true); // final paint so the bubble always lands on the complete text, not a throttled-out partial
   state.sending = false;
-  persistActiveConversation();
+  window.crucible.conversations.save(conv);
   render();
 }
 

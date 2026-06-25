@@ -82,7 +82,7 @@ function registerIpc() {
     if (!modelPath) throw new Error("Model not downloaded yet.");
     const exePath = runtimeManager.findServerBinary(s.runtimeDir);
     if (!exePath) throw new Error("llama.cpp runtime not installed yet.");
-    if (serverManager.proc) serverManager.stop();
+    if (serverManager.proc) await serverManager.stop();
     settings.save({ selectedPreset: presetId });
     serverManager.start({ exePath, preset, modelPath, port: s.port, overrides });
     return true;

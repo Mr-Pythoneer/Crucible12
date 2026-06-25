@@ -85,7 +85,7 @@ function selectAssets(assets, platform, arch, backend) {
   throw new Error(`Unsupported platform: ${platform}`);
 }
 
-async function downloadToFile(url, outPath, onProgress) {
+async function downloadToFileOnce(url, outPath, onProgress) {
   const res = await fetch(url, { headers: { "User-Agent": "Crucible12-Desktop" } });
   if (!res.ok) throw new Error(`Download failed: HTTP ${res.status} for ${url}`);
   const total = Number(res.headers.get("content-length") || 0) || null;
@@ -109,6 +109,26 @@ async function downloadToFile(url, outPath, onProgress) {
   }
   if (onProgress) onProgress({ downloaded, total });
   await new Promise((resolve, reject) => fileHandle.end((err) => (err ? reject(err) : resolve())));
+
+  if (total !== null && downloaded !== total) {
+    throw new Error(`Download incomplete: got ${downloaded} of ${total} bytes`);
+  }
+}
+
+async function downloadToFile(url, outPath, onProgress) {
+  let attempt = 0;
+  const maxAttempts = 5;
+  while (true) {
+    attempt++;
+    try {
+      await downloadToFileOnce(url, outPath, onProgress);
+      return;
+    } catch (err) {
+      fs.rmSync(outPath, { force: true }); // partial/corrupt file — don't let a retry append to it
+      if (attempt >= maxAttempts) throw err;
+      await new Promise((r) => setTimeout(r, Math.min(30000, 3000 * attempt)));
+    }
+  }
 }
 
 function extract(kind, archivePath, destDir) {
@@ -141,37 +161,54 @@ function findServerBinary(runtimeDir) {
   return null;
 }
 
+let ensureRuntimeInFlight = null;
+
 async function ensureRuntime(runtimeDir, backend, onProgress) {
   const existing = findServerBinary(runtimeDir);
   if (existing) return existing;
 
-  const platform = process.platform;
-  const arch = process.arch;
-  if (onProgress) onProgress({ stage: "querying-release" });
-  const release = await fetchLatestRelease();
-  const selection = selectAssets(release.assets, platform, arch, backend);
+  // Re-entrancy guard: if a second call comes in while one's already running
+  // (e.g. a stray double-click past the UI's own disabled-button guard), share
+  // the same in-flight promise instead of racing two extractions into the same dir.
+  if (ensureRuntimeInFlight) return ensureRuntimeInFlight;
 
-  const tmpDir = path.join(os.tmpdir(), `crucible12-runtime-${Date.now()}`);
-  fs.mkdirSync(tmpDir, { recursive: true });
+  ensureRuntimeInFlight = (async () => {
+    const platform = process.platform;
+    const arch = process.arch;
+    if (onProgress) onProgress({ stage: "querying-release" });
+    const release = await fetchLatestRelease();
+    const selection = selectAssets(release.assets, platform, arch, backend);
 
-  for (const part of selection.parts) {
-    if (onProgress) onProgress({ stage: "downloading", asset: part.name });
-    const archivePath = path.join(tmpDir, part.name);
-    await downloadToFile(part.url, archivePath, (p) =>
-      onProgress && onProgress({ stage: "downloading", asset: part.name, ...p })
-    );
-    if (onProgress) onProgress({ stage: "extracting", asset: part.name });
-    extract(selection.kind, archivePath, runtimeDir);
+    const tmpDir = path.join(os.tmpdir(), `crucible12-runtime-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+
+    try {
+      for (const part of selection.parts) {
+        if (onProgress) onProgress({ stage: "downloading", asset: part.name });
+        const archivePath = path.join(tmpDir, part.name);
+        await downloadToFile(part.url, archivePath, (p) =>
+          onProgress && onProgress({ stage: "downloading", asset: part.name, ...p })
+        );
+        if (onProgress) onProgress({ stage: "extracting", asset: part.name });
+        extract(selection.kind, archivePath, runtimeDir);
+      }
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    const exe = findServerBinary(runtimeDir);
+    if (!exe) throw new Error("Extracted llama.cpp release but couldn't find llama-server inside it.");
+    if (process.platform !== "win32") {
+      fs.chmodSync(exe, 0o755);
+    }
+    return exe;
+  })();
+
+  try {
+    return await ensureRuntimeInFlight;
+  } finally {
+    ensureRuntimeInFlight = null;
   }
-
-  fs.rmSync(tmpDir, { recursive: true, force: true });
-
-  const exe = findServerBinary(runtimeDir);
-  if (!exe) throw new Error("Extracted llama.cpp release but couldn't find llama-server inside it.");
-  if (process.platform !== "win32") {
-    fs.chmodSync(exe, 0o755);
-  }
-  return exe;
 }
 
 module.exports = { ensureRuntime, findServerBinary, fetchLatestRelease, selectAssets };

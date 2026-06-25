@@ -30,10 +30,14 @@ function renderSetupView() {
   main.appendChild(view);
 
   if (!serverLogUnsub) {
+    const MAX_LOG_CHARS = 50000; // unbounded textContent growth over a long-running server is a real leak
     serverLogUnsub = window.crucible.server.onLog((text) => {
       const box = document.getElementById("serverLogBox");
       if (box) {
         box.textContent += text;
+        if (box.textContent.length > MAX_LOG_CHARS) {
+          box.textContent = box.textContent.slice(-MAX_LOG_CHARS);
+        }
         box.scrollTop = box.scrollHeight;
       }
     });

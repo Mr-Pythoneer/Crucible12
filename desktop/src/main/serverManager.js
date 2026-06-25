@@ -106,9 +106,22 @@ class ServerManager extends EventEmitter {
   }
 
   stop() {
-    if (!this.proc) return false;
-    this.proc.kill();
-    return true;
+    if (!this.proc) return Promise.resolve(false);
+    const proc = this.proc;
+    return new Promise((resolve) => {
+      const forceKillTimer = setTimeout(() => {
+        try {
+          proc.kill("SIGKILL"); // didn't exit cleanly in time — don't hang the caller forever
+        } catch {
+          /* already gone */
+        }
+      }, 5000);
+      proc.once("exit", () => {
+        clearTimeout(forceKillTimer);
+        resolve(true);
+      });
+      proc.kill();
+    });
   }
 
   getStatus() {

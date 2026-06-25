@@ -1,6 +1,6 @@
 {
   "name": "crucible12-desktop",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Local AI coding/chat desktop app — runs entirely offline against your own llama.cpp server. Mac, Linux, Windows.",
   "main": "src/main/main.js",
   "author": "Crucible12",
