@@ -121,6 +121,7 @@
   .platform-card .pname { font-weight: 700; font-size: 1.05rem; }
   .platform-card .pfmt { color: var(--text-dim); font-size: 0.82rem; margin-top: 4px; }
   .platform-card .preq { color: var(--text-dim); font-size: 0.78rem; margin-top: 10px; line-height: 1.5; }
+  .platform-card .preq code { color: var(--text); background: var(--bg-card2); border-radius: 4px; padding: 1px 5px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.92em; }
   .tier-table-note { font-size: 0.82rem; color: var(--text-dim); margin-top: 10px; }
 </style>
 </head>
@@ -147,7 +148,7 @@
       <div class="glyph">🍎</div>
       <div class="pname">macOS</div>
       <div class="pfmt">.dmg · Apple Silicon</div>
-      <div class="preq">Unsigned build — right-click → Open on first launch.</div>
+      <div class="preq">Unsigned build — macOS will say "damaged," it isn't. Run <code>xattr -cr ~/Downloads/Crucible12*.dmg</code> in Terminal first.</div>
     </a>
     <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
       <div class="glyph">🪟</div>

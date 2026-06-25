@@ -24,10 +24,14 @@ npm run build:linux   # x64 .AppImage
 
 Output lands in `release/`. **These are unsigned builds** — there's no Apple Developer ID or Windows Authenticode certificate behind this project, so macOS Gatekeeper and Windows SmartScreen will both flag the app on first launch:
 
-- **macOS:** right-click the app → Open, or allow it in System Settings → Privacy & Security.
+- **macOS:** you'll likely see **"Crucible12" is damaged and can't be opened** — not actually a bad download, just Gatekeeper rejecting an ad-hoc-signed app that was downloaded via a browser (it sets a quarantine flag; only a real Apple notarization cert avoids this). The dialog only offers Eject/Cancel, so right-click → Open won't help here. Fix it in Terminal instead, **before** opening the `.dmg`:
+  ```
+  xattr -cr ~/Downloads/Crucible12*.dmg
+  ```
+  Then open the dmg and drag the app to Applications normally. If it still complains, run the same command against the installed app: `xattr -cr /Applications/Crucible12.app`.
 - **Windows:** click "More info" → "Run anyway" on the SmartScreen prompt.
 
-This is normal for an indie open-source app without a paid code-signing certificate — not a sign anything's wrong.
+This is normal for an indie open-source app without a paid code-signing certificate — not a sign anything's wrong with the download.
 
 The Mac build defaults to **arm64 only** (Apple Silicon) — no Intel Mac target is published. If you're on an Intel Mac, building `--mac --x64` yourself should work but is untested.
 
