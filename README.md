@@ -7,6 +7,13 @@ There are two ways in:
 - **[`desktop/`](desktop)** — a cross-platform Electron app (macOS, Linux, Windows) with a built-in model picker and chat UI. Pick a preset, it downloads the model and the llama.cpp runtime, and you're chatting locally. Grab a build from the [releases page](https://github.com/Mr-Pythoneer/Crucible12/releases/latest) or the [project site](https://mr-pythoneer.github.io/Crucible12/).
 - **PowerShell scripts (Windows)** — `setup/` and [`tiers/`](tiers) wire the same models into [OpenCode](https://github.com/anomalyco/opencode), the terminal-native coding agent, instead of a chat window. This is how the project started: tuned specifically for one high-end machine (RTX 5090 + Ryzen 9 9950X3D + 64GB DDR5-6400), described below. That tier still exists — it's just not the only one anymore. `tiers/` covers everything from a no-GPU laptop up to 16GB-VRAM cards with the same script-based approach.
 
+> [!IMPORTANT]
+> **macOS users: every download will say `"Crucible12" is damaged and can't be opened.`** It isn't damaged — there's no paid Apple Developer ID behind this project to notarize the app, and macOS shows that message (with no "Open Anyway" option, even in System Settings → Privacy & Security) for any unsigned app downloaded via a browser. **Before opening the `.dmg`**, run this in Terminal — it has to be done **every time you download a new copy**, the quarantine flag is per-file:
+> ```
+> xattr -cr ~/Downloads/Crucible12*.dmg
+> ```
+> Then open the dmg and drag the app to Applications as normal. Windows has the same root cause (no Authenticode certificate) but a real bypass: SmartScreen → "More info" → "Run anyway" works as shown, no Terminal needed.
+
 Crucible12 doesn't reinvent the agent loop. It pairs a llama.cpp inference backend with models picked to fit whatever you're running them on, and either OpenCode or a from-scratch chat UI on top, so the whole thing is a handful of commands (or one app install) instead of an afternoon of yak-shaving. The rest of this README covers the original big-rig PowerShell build in detail — for the desktop app or the lesser-hardware tiers, see their own READMEs linked above.
 
 ## Why this isn't just "run Ollama"

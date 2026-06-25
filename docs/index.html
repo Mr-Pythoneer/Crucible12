@@ -143,12 +143,22 @@
 <section id="download">
   <h2>Get the desktop app</h2>
   <p class="sub">One app, every platform — pick a model in the built-in model picker and chat with it. Mac, Linux, and Windows builds come from the same code, built on GitHub's own runners for each OS.</p>
+
+  <div class="callout" style="margin-top:0;margin-bottom:20px;background:rgba(217,163,92,0.1);border-color:rgba(217,163,92,0.35)">
+    ⚠️ <strong>macOS will say <code>"Crucible12" is damaged and can't be opened.</code> It isn't.</strong> There's no paid Apple Developer ID behind this project to notarize the app, so macOS shows that message — with no "Open Anyway" option anywhere, including System Settings — for any unsigned app downloaded via a browser. <strong>Before opening the <code>.dmg</code></strong>, run this in Terminal (needed for every fresh download — the quarantine flag is per-file):
+    <div class="cmd" style="margin-top:10px">
+      <button class="copybtn" id="xattrCopyBtn">Copy</button>
+      <pre><code>xattr -cr ~/Downloads/Crucible12*.dmg</code></pre>
+    </div>
+    Then open the dmg and drag the app to Applications normally. <strong>Windows</strong> has the same root cause (no Authenticode certificate) but a real bypass: SmartScreen → "More info" → "Run anyway" works as shown, no Terminal needed.
+  </div>
+
   <div class="platforms">
     <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
       <div class="glyph">🍎</div>
       <div class="pname">macOS</div>
       <div class="pfmt">.dmg · Apple Silicon</div>
-      <div class="preq">Unsigned build — macOS will say "damaged," it isn't. Run <code>xattr -cr ~/Downloads/Crucible12*.dmg</code> in Terminal first.</div>
+      <div class="preq">Unsigned — see the note above before opening.</div>
     </a>
     <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
       <div class="glyph">🪟</div>
@@ -373,6 +383,13 @@ el('copyBtn').addEventListener('click', () => {
   const text = el('cmdBlock').dataset.plain || '';
   navigator.clipboard.writeText(text).then(() => {
     const b = el('copyBtn'); b.textContent = 'Copied ✓'; b.classList.add('copied');
+    setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1600);
+  }).catch(() => {});
+});
+
+el('xattrCopyBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText('xattr -cr ~/Downloads/Crucible12*.dmg').then(() => {
+    const b = el('xattrCopyBtn'); b.textContent = 'Copied ✓'; b.classList.add('copied');
     setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1600);
   }).catch(() => {});
 });

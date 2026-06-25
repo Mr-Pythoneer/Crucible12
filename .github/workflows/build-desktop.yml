@@ -72,3 +72,12 @@ jobs:
         with:
           files: artifacts/**/*
           generate_release_notes: true
+          body: |
+            > [!IMPORTANT]
+            > **macOS will say `"Crucible12" is damaged and can't be opened.`** It isn't — there's no paid Apple Developer ID behind this project to notarize the app, and macOS shows that message (no "Open Anyway" option anywhere, including System Settings) for any unsigned app downloaded via a browser. **Before opening the `.dmg`**, run this in Terminal — needed for every fresh download, the quarantine flag is per-file:
+            > ```
+            > xattr -cr ~/Downloads/Crucible12*.dmg
+            > ```
+            > Then open the dmg and drag the app to Applications normally.
+            >
+            > **Windows** has the same root cause (no Authenticode certificate) but a real bypass: SmartScreen → "More info" → "Run anyway" works as shown, no Terminal needed.
