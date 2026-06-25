@@ -13,22 +13,51 @@
       max       Qwen3-Coder-Next @ Q6_K_XL  (~73GB) — higher fidelity, a bit slower
       fast      Qwen3-Coder-30B-A3B @ Q4    (~18GB) — fully on GPU, lowest latency
       reasoning gpt-oss-120b native MXFP4   (~60GB) — strong reasoning SECONDARY
+      small     Qwen2.5-Coder-7B-Instruct   (~4.4GB) — for the tiers/ configs (8GB+ VRAM, or CPU-only)
+
+    Downloads resume automatically if interrupted (uses Invoke-WebRequest -Resume,
+    which requires PowerShell 6.1+ — run these scripts with `pwsh`, not legacy
+    Windows PowerShell 5.1, or -Resume is silently ignored and re-downloads from 0).
 
 .PARAMETER Preset
-    "crucible", "max", "fast", "reasoning", or "all". Default: crucible.
+    "crucible", "max", "fast", "reasoning", "small", or "all". Default: crucible.
 
 .PARAMETER ModelsDir
     Destination directory. Defaults to ..\models relative to this script.
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet("crucible", "max", "fast", "reasoning", "all")]
+    [ValidateSet("crucible", "max", "fast", "reasoning", "small", "all")]
     [string]$Preset = "crucible",
 
     [string]$ModelsDir = (Join-Path $PSScriptRoot "..\models")
 )
 
 $ErrorActionPreference = "Stop"
+
+if ($PSVersionTable.PSVersion.Major -lt 6) {
+    Write-Warning "You're running Windows PowerShell $($PSVersionTable.PSVersion) — these multi-GB downloads work much better under PowerShell 7+ (resume support, modern TLS). Install with 'winget install Microsoft.PowerShell' and re-run this script via 'pwsh', not 'powershell.exe'."
+}
+
+function Save-FileWithResume {
+    param([string]$Url, [string]$OutFile, [int]$MaxRetries = 6)
+    $prevProgressPref = $ProgressPreference
+    $ProgressPreference = "SilentlyContinue"   # progress bar makes Invoke-WebRequest dramatically slower
+    try {
+        for ($attempt = 1; $attempt -le $MaxRetries; $attempt++) {
+            try {
+                Invoke-WebRequest -Uri $Url -OutFile $OutFile -Resume
+                return
+            } catch {
+                Write-Warning "Download attempt $attempt/$MaxRetries failed: $($_.Exception.Message)"
+                if ($attempt -eq $MaxRetries) { throw }
+                Start-Sleep -Seconds ([Math]::Min(60, 5 * $attempt))
+            }
+        }
+    } finally {
+        $ProgressPreference = $prevProgressPref
+    }
+}
 
 # Quant patterns are dynamic-quant ("UD-") variants — see README for size/quality tradeoffs.
 $presets = @{
@@ -51,6 +80,11 @@ $presets = @{
         Repo    = "ggml-org/gpt-oss-120b-GGUF"
         Pattern = "*mxfp4*"
         Notes   = "~60GB native MXFP4, strong reasoning SECONDARY"
+    }
+    small = @{
+        Repo    = "bartowski/Qwen2.5-Coder-7B-Instruct-GGUF"
+        Pattern = "*Q4_K_M*"
+        Notes   = "~4.4GB dense model — used by the tiers/ configs for lesser hardware"
     }
 }
 
@@ -82,7 +116,7 @@ foreach ($name in $targets) {
         }
         $url = "https://huggingface.co/$($cfg.Repo)/resolve/main/$file"
         Write-Host "Downloading $file ..."
-        Invoke-WebRequest -Uri $url -OutFile $outPath
+        Save-FileWithResume -Url $url -OutFile $outPath
     }
 
     Write-Host "Done: $destDir" -ForegroundColor Green

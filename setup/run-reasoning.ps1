@@ -17,6 +17,10 @@
     Requires a RECENT llama.cpp build (b8967+ added native Blackwell MXFP4 MMQ for the
     prefill speedup) and DDR5 EXPO/XMP in BIOS (RAM-bandwidth-bound generation).
 
+    NOTE: there's an open llama.cpp issue where --chat-template-kwargs reasoning_effort
+    is sometimes ignored depending on build/template version (ggml-org/llama.cpp#15130).
+    If -ReasoningEffort doesn't seem to change behavior, update llama.cpp first.
+
 .PARAMETER CpuMoe
     Leading MoE layers whose experts offload to CPU RAM. Default: 20.
 .PARAMETER ReasoningEffort

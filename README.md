@@ -139,6 +139,11 @@ Inside OpenCode, run `/models` and pick the local provider/model, then start cod
 - **OpenCode's tool calls fail or use hallucinated arguments** — make sure `--jinja` is present in the launch command (it's in both presets by default — needed for the model's tool-calling chat template to be applied correctly). Local models, even agentic-tuned ones, are less consistent at tool-calling than top-tier hosted models; if `crucible` is unreliable for a particular workflow, try `fast` (smaller, often more consistent) before assuming the harness is broken.
 - **`02-download-models.ps1` finds no matching files** — Hugging Face quant filenames change between uploads; the script prints the repo URL it tried, browse `/tree/main` there and adjust the `-Pattern`/repo in the script.
 - **`npm`/`node` not found** — `03-install-opencode.ps1` installs Node via `winget` automatically; open a new PowerShell window afterward so PATH updates take effect.
+- **Download keeps restarting from 0% after a dropped connection** — `02-download-models.ps1` retries with resume automatically, but resume requires PowerShell 6.1+; run scripts via `pwsh`, not the legacy `powershell.exe` (Windows PowerShell 5.1), or it'll silently re-download from scratch each retry.
+
+## Don't have a 5090?
+
+This repo is built for one specific machine, but [`tiers/`](tiers/) has toned-down configs for lesser hardware — 16GB-VRAM GPUs, 8-12GB-VRAM GPUs, and CPU-only/laptop setups, each reusing the same `setup/` install/download scripts with different models and flags. They're repo-only (not on the [project site](https://mr-pythoneer.github.io/Crucible12/), which stays focused on the 5090 build) — see [`tiers/README.md`](tiers/README.md) for setup and the honest caveats (smaller models there are noticeably less reliable at tool-calling).
 
 ## What I verified vs. what you need to verify
 
@@ -155,20 +160,22 @@ What only you can confirm, on the actual machine: that the CUDA build installs a
 Crucible12/
 ├── setup/
 │   ├── 01-install-llamacpp.ps1   # CUDA llama.cpp build
-│   ├── 02-download-models.ps1    # GGUF weights for any/all presets
+│   ├── 02-download-models.ps1    # GGUF weights for any/all presets (resumable downloads)
 │   ├── 03-install-opencode.ps1   # OpenCode CLI
-│   ├── run-max.ps1               # launch llama-server, max preset (default)
-│   ├── run-crucible.ps1          # launch llama-server, crucible (Q4) preset
+│   ├── run-crucible.ps1          # launch llama-server, crucible (Q4) preset — DEFAULT
+│   ├── run-max.ps1               # launch llama-server, max (Q6) preset
 │   ├── run-fast.ps1              # launch llama-server, fast preset
 │   ├── run-reasoning.ps1         # launch llama-server, gpt-oss-120b secondary
 │   └── benchmark.ps1             # tok/s + GPU utilization check
 ├── config/
-│   ├── opencode.max.json         # OpenCode -> local server, max preset
 │   ├── opencode.crucible.json    # OpenCode -> local server, crucible preset
+│   ├── opencode.max.json         # OpenCode -> local server, max preset
 │   ├── opencode.fast.json        # OpenCode -> local server, fast preset
 │   └── opencode.reasoning.json   # OpenCode -> local server, reasoning secondary
+├── tiers/                        # toned-down configs for lesser hardware (16GB/8GB VRAM, CPU-only)
+│   └── README.md                 # not on the project site — repo-only, see tiers/README.md
 ├── docs/
-│   └── index.html                # GitHub Pages landing page
+│   └── index.html                # GitHub Pages landing page (5090 build only)
 ├── LICENSE
 └── NOTICE                        # credits for OpenCode / llama.cpp / Qwen / Unsloth
 ```
