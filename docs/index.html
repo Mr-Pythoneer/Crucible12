@@ -145,12 +145,14 @@
   <p class="sub">One app, every platform — pick a model in the built-in model picker and chat with it. Mac, Linux, and Windows builds come from the same code, built on GitHub's own runners for each OS.</p>
 
   <div class="callout" style="margin-top:0;margin-bottom:20px;background:rgba(217,163,92,0.1);border-color:rgba(217,163,92,0.35)">
-    ⚠️ <strong>macOS will say <code>"Crucible12" is damaged and can't be opened.</code> It isn't.</strong> There's no paid Apple Developer ID behind this project to notarize the app, so macOS shows that message — with no "Open Anyway" option anywhere, including System Settings — for any unsigned app downloaded via a browser. <strong>Before opening the <code>.dmg</code></strong>, run this in Terminal (needed for every fresh download — the quarantine flag is per-file):
+    ⚠️ <strong>None of these builds are code-signed</strong> — no paid Apple Developer ID or Windows Authenticode/EV certificate behind this project. That causes different friction per OS:
+    <div style="margin-top:10px"><strong>macOS</strong> will say <code>"Crucible12" is damaged and can't be opened.</code> It isn't — that's just Gatekeeper rejecting an unsigned, browser-downloaded app, with no "Open Anyway" option anywhere. <strong>Before opening the <code>.dmg</code></strong>, run this in Terminal (needed for every fresh download — the quarantine flag is per-file):</div>
     <div class="cmd" style="margin-top:10px">
       <button class="copybtn" id="xattrCopyBtn">Copy</button>
       <pre><code>xattr -cr ~/Downloads/Crucible12*.dmg</code></pre>
     </div>
-    Then open the dmg and drag the app to Applications normally. <strong>Windows</strong> has the same root cause (no Authenticode certificate) but a real bypass: SmartScreen → "More info" → "Run anyway" works as shown, no Terminal needed.
+    Then open the dmg and drag the app to Applications normally.
+    <div style="margin-top:14px"><strong>Windows</strong> SmartScreen's warning has a real bypass — "More info" → "Run anyway." But the unsigned NSIS installer can also get flagged/quarantined by Defender or other antivirus as an actual detection, not just a warning — unsigned self-extracting installers trip that heuristic often. If so: grab the <strong>portable</strong> build instead (<code>Crucible12-&lt;version&gt;-portable.exe</code> below — installs nothing, far less likely to trip the same heuristic), or restore the file from Windows Security → Protection history if it was quarantined. It's a false positive, not a real problem with the file.</div>
   </div>
 
   <div class="platforms">
@@ -163,8 +165,8 @@
     <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
       <div class="glyph">🪟</div>
       <div class="pname">Windows</div>
-      <div class="pfmt">.exe installer · x64</div>
-      <div class="preq">Unsigned build — click "More info" → "Run anyway" on SmartScreen.</div>
+      <div class="pfmt">.exe installer or portable · x64</div>
+      <div class="preq">Unsigned — AV may flag the installer. Try the portable build if so.</div>
     </a>
     <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
       <div class="glyph">🐧</div>
