@@ -13,21 +13,25 @@
       max       Qwen3-Coder-Next @ Q6_K_XL  (~73GB) — higher fidelity, a bit slower
       fast      Qwen3-Coder-30B-A3B @ Q4    (~18GB) — fully on GPU, lowest latency
       reasoning gpt-oss-120b native MXFP4   (~60GB) — strong reasoning SECONDARY
-      small     Qwen2.5-Coder-7B-Instruct   (~4.4GB) — for the tiers/ configs (8GB+ VRAM, or CPU-only)
+
+    For tiers/ (lesser hardware) — the full Qwen2.5-Coder size ladder, not just one point:
+      tiny      Qwen2.5-Coder-3B-Instruct   (~1.9GB) — 4-6GB VRAM, or fast CPU-only
+      small     Qwen2.5-Coder-7B-Instruct   (~4.4GB) — 6-8GB VRAM
+      medium    Qwen2.5-Coder-14B-Instruct  (~9GB)   — 10-12GB VRAM, fills the 7B->30B gap
 
     Downloads resume automatically if interrupted (uses Invoke-WebRequest -Resume,
     which requires PowerShell 6.1+ — run these scripts with `pwsh`, not legacy
     Windows PowerShell 5.1, or -Resume is silently ignored and re-downloads from 0).
 
 .PARAMETER Preset
-    "crucible", "max", "fast", "reasoning", "small", or "all". Default: crucible.
+    "crucible", "max", "fast", "reasoning", "tiny", "small", "medium", or "all". Default: crucible.
 
 .PARAMETER ModelsDir
     Destination directory. Defaults to ..\models relative to this script.
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet("crucible", "max", "fast", "reasoning", "small", "all")]
+    [ValidateSet("crucible", "max", "fast", "reasoning", "tiny", "small", "medium", "all")]
     [string]$Preset = "crucible",
 
     [string]$ModelsDir = (Join-Path $PSScriptRoot "..\models")
@@ -81,10 +85,20 @@ $presets = @{
         Pattern = "*mxfp4*"
         Notes   = "~60GB native MXFP4, strong reasoning SECONDARY"
     }
+    tiny = @{
+        Repo    = "bartowski/Qwen2.5-Coder-3B-Instruct-GGUF"
+        Pattern = "*Q4_K_M*"
+        Notes   = "~1.9GB dense model — tiers/ configs for 4-6GB VRAM or fast CPU-only"
+    }
     small = @{
         Repo    = "bartowski/Qwen2.5-Coder-7B-Instruct-GGUF"
         Pattern = "*Q4_K_M*"
-        Notes   = "~4.4GB dense model — used by the tiers/ configs for lesser hardware"
+        Notes   = "~4.4GB dense model — tiers/ configs for 6-8GB VRAM"
+    }
+    medium = @{
+        Repo    = "bartowski/Qwen2.5-Coder-14B-Instruct-GGUF"
+        Pattern = "*Q4_K_M*"
+        Notes   = "~9GB dense model — tiers/ configs for 10-12GB VRAM (the 7B->30B gap)"
     }
 }
 

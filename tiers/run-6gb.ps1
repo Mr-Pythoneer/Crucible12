@@ -1,7 +1,8 @@
 <#
 .SYNOPSIS
-    Toned-down preset for 8-12GB-VRAM cards (RTX 3060/4060/5060-class) with 16GB+ RAM.
-    NOT for the 5090 box — use the main setup/ presets there.
+    Toned-down preset for 6-8GB-VRAM cards (RTX 3050/4060/5060-class) with 16GB+ RAM.
+    NOT for the 5090 box — use the main setup/ presets there. For 10-12GB cards see
+    run-12gb.ps1 (14B model) instead — a better fit than stretching this 7B further.
 
 .DESCRIPTION
     A small dense model — Qwen2.5-Coder-7B-Instruct @ Q4_K_M (~4.4GB) — fully resident on

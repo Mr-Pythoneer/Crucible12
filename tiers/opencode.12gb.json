@@ -1,15 +1,15 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "tier8-local": {
+    "tier12-local": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Tier 8-12GB (Qwen2.5-Coder-7B, fully on GPU)",
+      "name": "Tier 10-12GB (Qwen2.5-Coder-14B, fully on GPU)",
       "options": {
         "baseURL": "http://127.0.0.1:8080/v1"
       },
       "models": {
-        "qwen2.5-coder-7b": {
-          "name": "Qwen2.5-Coder-7B-Instruct (8-12GB VRAM tier)"
+        "qwen2.5-coder-14b": {
+          "name": "Qwen2.5-Coder-14B-Instruct (10-12GB VRAM tier)"
         }
       }
     }
