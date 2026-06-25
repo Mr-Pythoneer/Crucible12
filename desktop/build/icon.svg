@@ -1,0 +1,39 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2825"/>
+      <stop offset="1" stop-color="#1a1916"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8a37c"/>
+      <stop offset="1" stop-color="#cc785c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+
+  <!-- crucible vessel -->
+  <path d="M 312 470
+           L 712 470
+           L 660 760
+           Q 650 820 580 820
+           L 444 820
+           Q 374 820 364 760
+           Z"
+        fill="none" stroke="#cc785c" stroke-width="34" stroke-linejoin="round"/>
+
+  <!-- rim handles -->
+  <path d="M 312 470 Q 250 470 250 530" fill="none" stroke="#cc785c" stroke-width="34" stroke-linecap="round"/>
+  <path d="M 712 470 Q 774 470 774 530" fill="none" stroke="#cc785c" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- flame -->
+  <path d="M 512 220
+           C 460 300 440 350 470 410
+           C 485 440 520 450 512 490
+           C 560 470 600 420 580 360
+           C 612 390 618 440 590 480
+           C 660 440 660 340 600 280
+           C 605 320 590 330 575 320
+           C 590 270 560 230 512 220 Z"
+        fill="url(#flame)"/>
+</svg>

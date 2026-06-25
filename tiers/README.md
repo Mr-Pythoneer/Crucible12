@@ -1,6 +1,6 @@
 # Other hardware tiers
 
-The main repo (`setup/`, `config/`) is tuned for one specific machine: RTX 5090 (32GB) + Ryzen 9 9950X3D + 64GB DDR5-6400. These are toned-down variants for everyone else — lower-VRAM GPUs, or no dedicated GPU at all. They're **not** part of the [interactive picker on the project site](https://mr-pythoneer.github.io/Crucible12/) (that page stays focused on the 5090 build this repo was actually designed for) — find them here in the repo instead.
+The main repo (`setup/`, `config/`) started out tuned for one specific machine: RTX 5090 (32GB) + Ryzen 9 9950X3D + 64GB DDR5-6400. These are PowerShell variants of the same idea for everyone else — lower-VRAM GPUs, or no dedicated GPU at all. The [project site](https://mr-pythoneer.github.io/Crucible12/) links here, but its interactive command generator still only covers the original four big-rig presets — these tiers are simple enough (one model, no real knobs to tune) that a static table does the job. If you'd rather have a GUI than PowerShell, the [desktop app](../desktop) covers this same hardware ladder cross-platform.
 
 Same honesty note as the rest of the project, doubled: these were written without access to *any* of these hardware tiers (the main repo was already built blind to the 5090 — this is one level blinder). Treat the defaults as reasonable starting points from general community benchmarks, not measured numbers. Expect to tune `--n-cpu-moe` / context size / quant choice for your actual box.
 

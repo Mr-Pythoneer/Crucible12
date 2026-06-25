@@ -1,0 +1,74 @@
+name: Build desktop app
+
+on:
+  push:
+    branches: [main]
+    paths: ["desktop/**", ".github/workflows/build-desktop.yml"]
+    tags: ["v*"]
+  pull_request:
+    paths: ["desktop/**"]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            script: build:mac
+            artifact: mac-dmg
+            glob: desktop/release/*.dmg
+          - os: windows-latest
+            script: build:win
+            artifact: win-installer
+            glob: desktop/release/*.exe
+          - os: ubuntu-latest
+            script: build:linux
+            artifact: linux-appimage
+            glob: desktop/release/*.AppImage
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run ${{ matrix.script }}
+        env:
+          # No Apple Developer ID / code-signing cert in this repo's secrets —
+          # build unsigned rather than have electron-builder hunt for one in the
+          # runner's keychain. Same effect on Windows (no Authenticode cert).
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crucible12-${{ matrix.artifact }}
+          path: ${{ matrix.glob }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true

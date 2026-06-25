@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crucible12 — Local AI Coding Agent</title>
+<title>Crucible12 — Local AI, Any Hardware</title>
 <style>
   :root {
     --bg: #0b0c0f;
@@ -107,6 +107,21 @@
   .note { color: var(--text-dim); font-size: 0.85rem; }
   .callout { background: rgba(77,159,255,0.08); border: 1px solid rgba(77,159,255,0.3); border-radius: 10px; padding: 14px 16px; font-size: 0.9rem; margin-top: 18px; }
   footer { padding: 40px 0 80px; color: var(--text-dim); font-size: 0.88rem; }
+
+  /* platform download cards */
+  .platforms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 760px) { .platforms { grid-template-columns: 1fr; } }
+  .platform-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 22px; text-align: center; text-decoration: none; color: var(--text);
+    transition: border-color .15s, transform .1s;
+  }
+  .platform-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .platform-card .glyph { font-size: 1.8rem; margin-bottom: 8px; }
+  .platform-card .pname { font-weight: 700; font-size: 1.05rem; }
+  .platform-card .pfmt { color: var(--text-dim); font-size: 0.82rem; margin-top: 4px; }
+  .platform-card .preq { color: var(--text-dim); font-size: 0.78rem; margin-top: 10px; line-height: 1.5; }
+  .tier-table-note { font-size: 0.82rem; color: var(--text-dim); margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -114,19 +129,45 @@
 <header>
   <div class="wrap">
     <h1>Crucible<span>12</span></h1>
-    <p class="tagline">A fully local, fully offline AI coding agent — tuned for an RTX 5090, a Ryzen 9 9950X3D, and 64GB of DDR5-6400. No API keys, no cloud, no usage limits. Runs an 80B model across GPU + CPU + RAM.</p>
+    <p class="tagline">Local AI that fits the hardware you actually have — from a CPU-only laptop up to a maxed-out RTX 5090. No API keys, no cloud, no usage limits. Pick a model sized to your machine and everything runs offline.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="https://github.com/Mr-Pythoneer/Crucible12">⬇ Download from GitHub</a>
-      <a class="btn btn-secondary" href="#configure">Pick a model ↓</a>
+      <a class="btn btn-primary" href="#download">⬇ Get the desktop app</a>
+      <a class="btn btn-secondary" href="#configure">Prefer scripts? ↓</a>
     </div>
   </div>
 </header>
 
 <div class="wrap">
 
+<section id="download">
+  <h2>Get the desktop app</h2>
+  <p class="sub">One app, every platform — pick a model in the built-in model picker and chat with it. Mac, Linux, and Windows builds come from the same code, built on GitHub's own runners for each OS.</p>
+  <div class="platforms">
+    <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
+      <div class="glyph">🍎</div>
+      <div class="pname">macOS</div>
+      <div class="pfmt">.dmg · Apple Silicon</div>
+      <div class="preq">Unsigned build — right-click → Open on first launch.</div>
+    </a>
+    <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
+      <div class="glyph">🪟</div>
+      <div class="pname">Windows</div>
+      <div class="pfmt">.exe installer · x64</div>
+      <div class="preq">Unsigned build — click "More info" → "Run anyway" on SmartScreen.</div>
+    </a>
+    <a class="platform-card" href="https://github.com/Mr-Pythoneer/Crucible12/releases/latest">
+      <div class="glyph">🐧</div>
+      <div class="pname">Linux</div>
+      <div class="pfmt">.AppImage · x64</div>
+      <div class="preq">chmod +x and run — no install step needed.</div>
+    </a>
+  </div>
+  <p class="tier-table-note">All three are built from <a href="https://github.com/Mr-Pythoneer/Crucible12/tree/main/desktop">desktop/</a> via <a href="https://github.com/Mr-Pythoneer/Crucible12/actions">GitHub Actions</a> on real macOS/Windows/Linux runners. The app walks you through installing the llama.cpp runtime and downloading a model on first launch — from a 3B CPU-only model to the full 80B MoE tiers below.</p>
+</section>
+
 <section>
   <h2>Built on what already works</h2>
-  <p class="note">Crucible12 doesn't reinvent the agent loop — it pairs <a href="https://github.com/anomalyco/opencode">OpenCode</a>, the leading open-source terminal coding agent, with a hardware-tuned <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> backend and models chosen to exploit this exact GPU + CPU + RAM combination.</p>
+  <p class="note">Crucible12 doesn't reinvent the agent loop — it pairs <a href="https://github.com/anomalyco/opencode">OpenCode</a> (the scripts below) or a built-from-scratch chat UI (the desktop app) with a <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> backend, and a model picked to fit whatever you're running it on. The project started as a build tuned for one specific high-end machine — that tier still exists, it's just no longer the only one:</p>
   <div class="specs" style="margin-top:22px">
     <div class="spec-card">
       <div class="label">RTX 5090</div>
@@ -144,11 +185,12 @@
       <div class="role">Capacity for overflow experts the GPU alone can't hold</div>
     </div>
   </div>
+  <p class="note" style="margin-top:18px">Don't have that? The desktop app and the <a href="https://github.com/Mr-Pythoneer/Crucible12/tree/main/tiers">tiers/</a> scripts cover everything from a no-GPU laptop (3B, CPU-only) up through 4-6GB, 6-8GB, 10-12GB, and 16GB-VRAM cards before reaching the big-rig presets below.</p>
 </section>
 
 <section id="configure">
-  <h2>Pick your model</h2>
-  <p class="sub">Choose a preset — the specs, memory split, and exact setup commands update live.</p>
+  <h2>Prefer the command line? (Windows, the original big-rig presets)</h2>
+  <p class="sub">The PowerShell scripts this project started as — for the four MoE presets that need serious VRAM+RAM. Choose one and the specs, memory split, and exact setup commands update live. For everything below 16GB VRAM, see <a href="https://github.com/Mr-Pythoneer/Crucible12/tree/main/tiers">tiers/</a> or just use the desktop app above.</p>
 
   <div class="cfg">
     <div>
@@ -215,14 +257,14 @@
     <tr><td>3</td><td>gpt-oss-120b MXFP4 (<code>reasoning</code>)</td><td>Strongest raw coder that fits; agentic tool-calling can be flaky. Secondary.</td></tr>
     <tr><td>4–6</td><td>GLM-4.5-Air · Qwen3-235B · GLM-4.6/DeepSeek</td><td>Too slow (high active params) or don't fit at all.</td></tr>
   </table>
-  <p class="note" style="margin-top:14px">Full reasoning, benchmarks, and tuning guide in the <a href="https://github.com/Mr-Pythoneer/Crucible12#readme">README</a>.</p>
+  <p class="note" style="margin-top:14px">This logic is also why the lesser-hardware tiers use small dense models instead of trying to force a MoE onto a small card — full reasoning, benchmarks, and tuning guide in the <a href="https://github.com/Mr-Pythoneer/Crucible12#readme">README</a>.</p>
 </section>
 
 </div>
 
 <footer class="wrap">
-  Built on <a href="https://github.com/anomalyco/opencode">OpenCode</a> and <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>, with models from the <a href="https://huggingface.co/Qwen">Qwen team</a>, <a href="https://huggingface.co/openai">OpenAI</a>, and <a href="https://huggingface.co/unsloth">Unsloth</a>. MIT licensed — see <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/LICENSE">LICENSE</a> &amp; <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/NOTICE">NOTICE</a>. ·
-  <a href="https://github.com/Mr-Pythoneer/Crucible12/archive/refs/heads/main.zip">Download ZIP</a>
+  Built on <a href="https://github.com/anomalyco/opencode">OpenCode</a>, <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>, and Electron, with models from the <a href="https://huggingface.co/Qwen">Qwen team</a>, <a href="https://huggingface.co/openai">OpenAI</a>, and <a href="https://huggingface.co/unsloth">Unsloth</a>. MIT licensed — see <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/LICENSE">LICENSE</a> &amp; <a href="https://github.com/Mr-Pythoneer/Crucible12/blob/main/NOTICE">NOTICE</a>. ·
+  <a href="https://github.com/Mr-Pythoneer/Crucible12/archive/refs/heads/main.zip">Download source ZIP</a>
 </footer>
 
 <script>

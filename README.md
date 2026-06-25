@@ -1,8 +1,13 @@
 # Crucible12
 
-A local, fully-offline AI coding agent stack tuned specifically for one machine: **RTX 5090 (32GB) + Ryzen 9 9950X3D + 64GB DDR5-6400 on Windows 11.** No API keys, no cloud, no usage limits — your hardware does the work.
+A local, fully-offline AI stack that fits the hardware you actually have — from a CPU-only laptop up to a maxed-out RTX 5090. No API keys, no cloud, no usage limits — your hardware does the work.
 
-Crucible12 doesn't reinvent the agent loop. It pairs [OpenCode](https://github.com/anomalyco/opencode) (the current leading open-source, terminal-native coding agent) with a hardware-tuned [llama.cpp](https://github.com/ggml-org/llama.cpp) inference backend, a model chosen specifically to exploit this exact GPU+CPU+RAM combination, and Windows setup scripts so the whole thing is a handful of commands instead of an afternoon of yak-shaving.
+There are two ways in:
+
+- **[`desktop/`](desktop)** — a cross-platform Electron app (macOS, Linux, Windows) with a built-in model picker and chat UI. Pick a preset, it downloads the model and the llama.cpp runtime, and you're chatting locally. Grab a build from the [releases page](https://github.com/Mr-Pythoneer/Crucible12/releases/latest) or the [project site](https://mr-pythoneer.github.io/Crucible12/).
+- **PowerShell scripts (Windows)** — `setup/` and [`tiers/`](tiers) wire the same models into [OpenCode](https://github.com/anomalyco/opencode), the terminal-native coding agent, instead of a chat window. This is how the project started: tuned specifically for one high-end machine (RTX 5090 + Ryzen 9 9950X3D + 64GB DDR5-6400), described below. That tier still exists — it's just not the only one anymore. `tiers/` covers everything from a no-GPU laptop up to 16GB-VRAM cards with the same script-based approach.
+
+Crucible12 doesn't reinvent the agent loop. It pairs a llama.cpp inference backend with models picked to fit whatever you're running them on, and either OpenCode or a from-scratch chat UI on top, so the whole thing is a handful of commands (or one app install) instead of an afternoon of yak-shaving. The rest of this README covers the original big-rig PowerShell build in detail — for the desktop app or the lesser-hardware tiers, see their own READMEs linked above.
 
 ## Why this isn't just "run Ollama"
 
@@ -172,10 +177,16 @@ Crucible12/
 │   ├── opencode.max.json         # OpenCode -> local server, max preset
 │   ├── opencode.fast.json        # OpenCode -> local server, fast preset
 │   └── opencode.reasoning.json   # OpenCode -> local server, reasoning secondary
-├── tiers/                        # toned-down configs for lesser hardware (16GB/8GB VRAM, CPU-only)
-│   └── README.md                 # not on the project site — repo-only, see tiers/README.md
+├── tiers/                        # PowerShell configs for lesser hardware (CPU-only up to 16GB VRAM)
+│   └── README.md
+├── desktop/                      # cross-platform Electron app (mac/Linux/Windows), see desktop/README.md
+│   ├── src/main/                 # presets, settings, model+runtime downloaders, llama-server manager
+│   ├── src/renderer/             # chat UI, model picker, setup view
+│   └── README.md
+├── .github/workflows/
+│   └── build-desktop.yml         # builds the desktop app for all 3 OSes on every push, releases on tag
 ├── docs/
-│   └── index.html                # GitHub Pages landing page (5090 build only)
+│   └── index.html                # GitHub Pages landing page — desktop app + all hardware tiers
 ├── LICENSE
 └── NOTICE                        # credits for OpenCode / llama.cpp / Qwen / Unsloth
 ```

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' http://127.0.0.1:* data:; img-src 'self' data:; connect-src 'self' http://127.0.0.1:* https://huggingface.co https://api.github.com https://*.github.com https://*.githubusercontent.com;">
+<title>Crucible12</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="dot"></div>
+      <div class="name">Crucible12</div>
+    </div>
+    <button class="new-chat-btn" id="newChatBtn">＋ New chat</button>
+    <div class="conv-list" id="convList"></div>
+    <div class="sidebar-footer">
+      <div class="sidebar-link" id="serverStatusLink">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Server stopped</span>
+      </div>
+      <div class="sidebar-link" id="setupLink">⚙ Setup &amp; models</div>
+    </div>
+  </div>
+
+  <div class="main" id="mainPanel"></div>
+</div>
+
+<script src="markdown.js"></script>
+<script src="modelPicker.js"></script>
+<script src="chat.js"></script>
+<script src="setup.js"></script>
+<script src="sidebar.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
