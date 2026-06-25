@@ -70,12 +70,23 @@ async function downloadFile(url, outPath, onProgress, signal) {
 
   const fileHandle = fs.createWriteStream(tmpPath, { flags: resumed ? "a" : "w" });
   let downloaded = resumed ? startByte : 0;
+  let lastEmit = 0;
+  const EMIT_INTERVAL_MS = 200; // throttle progress — emitting per-chunk floods IPC and the renderer,
+                                 // worst on flaky/Wi-Fi connections that yield many small chunks
 
   for await (const chunk of res.body) {
-    fileHandle.write(chunk);
+    const canWriteMore = fileHandle.write(chunk);
     downloaded += chunk.length;
-    if (onProgress) onProgress({ downloaded, total });
+    if (!canWriteMore) {
+      await new Promise((resolve) => fileHandle.once("drain", resolve));
+    }
+    const now = Date.now();
+    if (onProgress && now - lastEmit >= EMIT_INTERVAL_MS) {
+      lastEmit = now;
+      onProgress({ downloaded, total });
+    }
   }
+  if (onProgress) onProgress({ downloaded, total }); // final update so the UI lands on 100%
   await new Promise((resolve, reject) => {
     fileHandle.end((err) => (err ? reject(err) : resolve()));
   });

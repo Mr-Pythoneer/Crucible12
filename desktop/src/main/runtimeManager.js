@@ -92,11 +92,22 @@ async function downloadToFile(url, outPath, onProgress) {
   let downloaded = 0;
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   const fileHandle = fs.createWriteStream(outPath);
+  let lastEmit = 0;
+  const EMIT_INTERVAL_MS = 200; // see modelManager.js — per-chunk emits flood IPC on slower/Wi-Fi connections
+
   for await (const chunk of res.body) {
-    fileHandle.write(chunk);
+    const canWriteMore = fileHandle.write(chunk);
     downloaded += chunk.length;
-    if (onProgress) onProgress({ downloaded, total });
+    if (!canWriteMore) {
+      await new Promise((resolve) => fileHandle.once("drain", resolve));
+    }
+    const now = Date.now();
+    if (onProgress && now - lastEmit >= EMIT_INTERVAL_MS) {
+      lastEmit = now;
+      onProgress({ downloaded, total });
+    }
   }
+  if (onProgress) onProgress({ downloaded, total });
   await new Promise((resolve, reject) => fileHandle.end((err) => (err ? reject(err) : resolve())));
 }
 
