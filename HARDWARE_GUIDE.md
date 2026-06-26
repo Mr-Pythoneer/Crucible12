@@ -8,13 +8,13 @@ Two axes: **what power tier is your machine**, and **what do you want it to do**
 
 | Tier | GPU VRAM | Apple Silicon (unified mem) | CPU-only RAM | Example hardware |
 |---|---|---|---|---|
-| **1 — Light** | 4-8GB | 8-18GB | 8-16GB | RTX 3050/4050/4060, GTX 1660, RX 7600; M1/M2/M3/M4 base Macs; any laptop with no dGPU |
-| **2 — Standard** | 10-16GB | 24GB | 32GB+ | RTX 3060 12GB, RTX 4070/4070 Ti, RTX 5070, RX 7700/7800 XT; 24GB MacBook Air/Pro |
-| **3 — Power** | 20-24GB | 32-48GB | — *(CPU-only can't realistically reach this tier — speed, not RAM, becomes the wall)* | RTX 3090/3090 Ti, RTX 4090, RX 7900 XT/XTX; 32-48GB Mac |
-| **4 — Max** | 32GB+ VRAM, 32GB+ system RAM | 64GB | — | RTX 5090; 64GB Mac (Studio/MacBook Pro) |
+| **1 — Light** | 4-8GB | 8-18GB | 8-16GB | Intel Arc B580 (12GB, ~$249 — best budget pick for this tier), RTX 3050/4050/4060, GTX 1660; M1-M4 base Macs; Snapdragon X/X2 ARM laptops (CPU-only — no GPU backend in stock llama.cpp release builds yet) |
+| **2 — Standard** | 10-16GB | 24GB | 32GB+ | RTX 3060 12GB, RTX 4060 Ti 16GB (~$424, closest to MSRP), RTX 4070/4070 Ti, RTX 5070, Radeon RX 9070/9070 XT (current AMD flagship, 16GB GDDR6); 24GB MacBook Air/Pro |
+| **3 — Power** | 20-24GB | 32-48GB | — *(CPU-only can't realistically reach this tier — speed, not RAM, becomes the wall)* | RTX 3090/3090 Ti (used market "value king" for 24GB), RTX 4090, Intel Arc Pro B70 (32GB, professional card); 32-48GB Mac |
+| **4 — Max** | 32GB+ VRAM, 32GB+ system RAM | 64GB | — | RTX 5090 (32GB — performance king, but ~$3,949 as of mid-2026 due to memory shortages, far above its $1,999 launch price); 64GB Mac (Studio/MacBook Pro) |
 | **5 — Extreme** | 32GB+ VRAM, 64GB+ system RAM, or multi-GPU | 96GB+ (Mac Studio Ultra) | — | RTX 5090 + 96GB+ RAM, dual-GPU workstations, Mac Studio Ultra |
 
-**Laptop GPUs often ship with less VRAM than their desktop namesake** — sort by the VRAM column, not the model name. AMD cards use the same model/quant picks via llama.cpp's Vulkan backend (the `tiers/` "Vulkan (any GPU)" option).
+**Laptop GPUs often ship with less VRAM than their desktop namesake** — confirmed directly: desktop RTX 5090 is 32GB/21,760 CUDA cores, the RTX 5090 *Laptop* GPU is only 24GB/10,496 CUDA cores. Sort by the VRAM column, not the model name. AMD cards use the same model/quant picks via llama.cpp's Vulkan backend (the `tiers/` "Vulkan (any GPU)" option); llama.cpp's official releases also now ship dedicated ROCm (AMD) and SYCL (Intel Arc) backends that outperform generic Vulkan on those GPUs specifically — not wired into this project yet, noted as a possible future improvement. The long-rumored "RTX 50 Super" refresh (more VRAM on existing cards) has been repeatedly delayed and is not shipping as of this guide's last check — don't wait for it.
 
 ---
 
