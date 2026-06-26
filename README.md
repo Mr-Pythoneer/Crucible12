@@ -2,6 +2,8 @@
 
 A local, fully-offline AI stack that fits the hardware you actually have — from a CPU-only laptop up to a maxed-out RTX 5090. No API keys, no cloud, no usage limits — your hardware does the work.
 
+Not sure what your machine can run? See **[`HARDWARE_GUIDE.md`](HARDWARE_GUIDE.md)** — a lookup table by GPU/CPU/Mac, no need to dig through the desktop app's picker or `tiers/` first.
+
 There are two ways in:
 
 - **[`desktop/`](desktop)** — a cross-platform Electron app (macOS, Linux, Windows) with a built-in model picker and chat UI. Pick a preset, it downloads the model and the llama.cpp runtime, and you're chatting locally. Grab a build from the [releases page](https://github.com/Mr-Pythoneer/Crucible12/releases/latest) or the [project site](https://mr-pythoneer.github.io/Crucible12/).

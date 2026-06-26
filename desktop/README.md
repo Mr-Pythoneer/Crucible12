@@ -4,6 +4,8 @@ A cross-platform desktop app for running local LLMs entirely offline — pick a 
 
 This is the desktop counterpart to the PowerShell scripts in [`setup/`](../setup) and [`tiers/`](../tiers) at the repo root — same presets, same llama.cpp backend, but cross-platform (macOS, Linux, Windows) with a GUI instead of a terminal.
 
+Not sure which preset matches your hardware? See [`../HARDWARE_GUIDE.md`](../HARDWARE_GUIDE.md) for a lookup table by GPU/CPU/Mac model — including Apple Silicon Macs, which the in-app picker doesn't have separate tiers for.
+
 ## Running from source
 
 ```bash
