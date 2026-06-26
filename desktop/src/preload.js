@@ -19,6 +19,11 @@ contextBridge.exposeInMainWorld("crucible", {
       return () => ipcRenderer.removeListener("model-download-progress", listener);
     },
   },
+  customModels: {
+    search: (repoId) => ipcRenderer.invoke("custom-models:search", repoId),
+    add: (payload) => ipcRenderer.invoke("custom-models:add", payload),
+    remove: (presetId) => ipcRenderer.invoke("custom-models:remove", presetId),
+  },
   runtime: {
     status: () => ipcRenderer.invoke("runtime:status"),
     ensure: (backend) => ipcRenderer.invoke("runtime:ensure", backend),

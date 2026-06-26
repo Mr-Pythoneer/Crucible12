@@ -16,6 +16,8 @@ npm start
 
 First run takes you to **Setup**: install the llama.cpp runtime for your platform (one click), then open the model picker and download a preset sized to your hardware. Everything downloads to a `Crucible12` folder under your Documents by default — changeable in Setup.
 
+Not on the preset list? Click **"+ Add model from Hugging Face"** at the top of the model picker, paste any repo id that ships GGUF weights (e.g. `bartowski/Qwen2.5-Coder-7B-Instruct-GGUF`), pick one of the listed quants, and it downloads straight from Hugging Face the same way the built-in presets do — same parallel-segment downloader, same on-disk layout. Multi-part shards (`-00001-of-0000N`) are detected and downloaded as one unit. Custom models default to fully GPU-resident with an 8K context window since there's no tuned preset for an arbitrary repo — adjust GPU offload/context the same way you would for a built-in preset if it doesn't fit your hardware.
+
 ## Building installers
 
 ```bash

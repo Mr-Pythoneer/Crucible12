@@ -12,6 +12,7 @@ const DEFAULTS = () => ({
   winBackend: "cuda", // cuda | vulkan | cpu — only used on Windows
   linuxBackend: "vulkan", // vulkan | cpu — only used on Linux
   theme: "dark",
+  customModels: [], // user-added Hugging Face models — see main/customModels.js
 });
 
 let cached = null;
